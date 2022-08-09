@@ -78,6 +78,14 @@ void shift_image(image im, int c, float v)
 void clamp_image(image im)
 {
     // TODO Fill this in
+    for (int x = 0; x < im.w; ++x) {
+        for (int y = 0; y < im.h; ++y) {
+            for (int c = 0; c < im.c; ++c) {
+                int idx = get_index(im, x, y, c);
+                im.data[idx] = im.data[idx] < 0 ? 0 : (im.data[idx] > 1 ? 1 : im.data[idx]);
+            }
+        }
+    }
 }
 
 
