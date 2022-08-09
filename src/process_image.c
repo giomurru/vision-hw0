@@ -67,7 +67,12 @@ image rgb_to_grayscale(image im)
 
 void shift_image(image im, int c, float v)
 {
-    // TODO Fill this in
+    for (int x = 0; x < im.w; ++x) {
+        for (int y = 0; y < im.h; ++y) {
+            int c_index = get_index(im, x, y, c);
+            im.data[c_index] += v;
+        }
+    }
 }
 
 void clamp_image(image im)
