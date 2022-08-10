@@ -103,9 +103,88 @@ float three_way_min(float a, float b, float c)
 void rgb_to_hsv(image im)
 {
     // TODO Fill this in
+    for (int x = 0; x < im.w; ++x) {
+        for (int y = 0; y < im.h; ++y) {
+            int r_index = get_index(im, x, y, 0);
+            int g_index = get_index(im, x, y, 1);
+            int b_index = get_index(im, x, y, 2);
+            float r = im.data[r_index];
+            float g = im.data[g_index];
+            float b = im.data[b_index];
+            //compute value v
+            float v = three_way_max(r, g, b);
+            //compute saturation s
+            float m = three_way_min(r, g, b);
+            float c = v - m;
+            float s = c / v;
+            //compute hue h
+            float h = 0;
+            if (c != 0) {
+                float hi;
+                if (v == r) {
+                    hi = (g - b)/c;
+                } else if (v == g) {
+                    hi = (b - r)/c + 2;
+                } else { //if (v == b)
+                    hi = (r - g)/c + 4;
+                }
+                h = hi/6;
+                if (hi < 0) {
+                    h += 1;
+                }
+            }
+            im.data[r_index] = h;
+            im.data[g_index] = s;
+            im.data[b_index] = v;
+        }
+    }
 }
 
 void hsv_to_rgb(image im)
 {
-    // TODO Fill this in
+    for (int x = 0; x < im.w; ++x) {
+        for (int y = 0; y < im.h; ++y) {
+            int h_index = get_index(im, x, y, 0);
+            int s_index = get_index(im, x, y, 1);
+            int v_index = get_index(im, x, y, 2);
+            float h = im.data[h_index];
+            float s = im.data[s_index];
+            float v = im.data[v_index];
+            float c = v * s;
+            float hi = h * 6;
+            float x = c * (1 - fabs((fmod(hi, 2) - 1)));
+            float ri;
+            float gi;
+            float bi;
+            if (hi >= 0 && hi < 1) {
+                ri = c;
+                gi = x;
+                bi = 0;
+            } else if (hi >= 1 && hi < 2) {
+                ri = x;
+                gi = c;
+                bi = 0;
+            } else if (hi >= 2 && hi < 3) {
+                ri = 0;
+                gi = c;
+                bi = x;
+            } else if (hi >= 3 && hi < 4) {
+                ri = 0;
+                gi = x;
+                bi = c;
+            } else if (hi >= 4 && hi < 5) {
+                ri = x;
+                gi = 0;
+                bi = c;
+            } else if (hi >= 5 && hi < 6) {
+                ri = c;
+                gi = 0;
+                bi = x;
+            }
+            float m = v - c;
+            im.data[h_index] = ri + m;
+            im.data[s_index] = gi + m;
+            im.data[v_index] = bi + m;
+        }
+    }
 }
